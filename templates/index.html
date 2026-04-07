@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rad-Scribe Pro — Automated Chest X-Ray Reporting</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Nunito+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1a2b4a;--teal:#00788a;--teal-lt:#e6f4f6;--blue:#1565c0;--white:#ffffff;--gray-50:#f7f9fb;--gray-100:#eef1f5;--gray-200:#d8dee8;--gray-400:#94a3b8;--gray-600:#475569;--gray-800:#1e293b;--green:#2e7d32;--green-lt:#e8f5e9;--red:#b71c1c;--red-lt:#ffebee;--amber:#e65100;--border:#dde3ed;--text:#1e293b;--muted:#64748b;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Nunito Sans',sans-serif;color:var(--text);background:var(--white);line-height:1.6;}
+a{text-decoration:none;color:inherit;}
+nav{position:sticky;top:0;z-index:100;background:var(--white);border-bottom:1px solid var(--border);padding:0 60px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.logo-wrap{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:34px;height:34px;background:var(--teal);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Source Serif 4',serif;font-weight:700;font-size:16px;color:#fff;}
+.logo-text{font-weight:800;font-size:16px;color:var(--navy);}
+.logo-text em{font-style:normal;color:var(--teal);}
+.nav-links{display:flex;align-items:center;gap:32px;}
+.nav-links a{font-size:13px;font-weight:600;color:var(--muted);transition:color 0.15s;}
+.nav-links a:hover{color:var(--navy);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;border:none;}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--navy);}
+.btn-outline:hover{border-color:var(--teal);color:var(--teal);}
+.btn-primary{background:var(--teal);color:#fff;}
+.btn-primary:hover{background:#006070;}
+.btn-lg{padding:13px 28px;font-size:14px;border-radius:8px;}
+.btn-ghost{background:transparent;border:1.5px solid rgba(255,255,255,0.25);color:#fff;}
+.btn-ghost:hover{background:rgba(255,255,255,0.08);}
+
+/* HERO */
+.hero{background:var(--navy);padding:80px 60px 0;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:end;min-height:520px;overflow:hidden;}
+.hero-left{padding-bottom:80px;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;border-radius:100px;background:rgba(0,120,138,0.25);border:1px solid rgba(0,120,138,0.4);font-size:11px;font-weight:700;color:#7ecfda;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:24px;}
+.hero-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:#7ecfda;}
+.hero h1{font-family:'Source Serif 4',serif;font-size:clamp(36px,4vw,54px);font-weight:700;color:#fff;line-height:1.1;letter-spacing:-0.5px;margin-bottom:20px;}
+.hero h1 em{font-style:normal;color:#7ecfda;}
+.hero-desc{font-size:16px;color:rgba(255,255,255,0.6);line-height:1.75;max-width:480px;margin-bottom:36px;}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;}
+.hero-stats{display:flex;gap:36px;margin-top:48px;padding-top:28px;border-top:1px solid rgba(255,255,255,0.1);}
+.hs-num{font-family:'Source Serif 4',serif;font-size:26px;font-weight:700;color:#fff;line-height:1;}
+.hs-lbl{font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;}
+.hero-right{display:flex;align-items:flex-end;}
+.mock{background:var(--gray-50);border-radius:10px 10px 0 0;border:1px solid var(--border);border-bottom:none;width:100%;padding:18px;box-shadow:0 -8px 40px rgba(0,0,0,0.3);}
+.mock-bar{display:flex;align-items:center;gap:6px;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:14px;}
+.mock-dot{width:9px;height:9px;border-radius:50%;}
+.mock-label{margin-left:auto;font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px;background:var(--green-lt);color:var(--green);}
+.mock-body{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.mock-xray{background:#0f1623;border-radius:6px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:38px;position:relative;overflow:hidden;}
+.mock-xray::after{content:'CHEST PA';position:absolute;bottom:8px;left:8px;font-size:8px;font-weight:700;color:rgba(255,255,255,0.25);letter-spacing:1px;}
+.mock-r{display:flex;flex-direction:column;gap:7px;}
+.mock-r-title{font-size:10px;font-weight:700;color:var(--navy);}
+.ml{height:7px;border-radius:3px;background:var(--gray-200);}
+.mc{display:flex;align-items:center;gap:5px;padding:4px 7px;border-radius:4px;font-size:9px;font-weight:700;}
+.mc::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;}
+.mc.g{background:var(--green-lt);color:var(--green);}
+.mc.r{background:var(--red-lt);color:var(--red);}
+
+section{padding:80px 60px;}
+.sl{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:12px;}
+.st{font-family:'Source Serif 4',serif;font-size:clamp(28px,3vw,38px);font-weight:700;color:var(--navy);line-height:1.15;letter-spacing:-0.3px;margin-bottom:16px;}
+.ss{font-size:15px;color:var(--muted);line-height:1.7;max-width:560px;}
+.divider{height:1px;background:var(--border);margin:0 60px;}
+
+/* TABLE */
+.tbl-section{background:var(--gray-50);}
+.tbl-inner{max-width:1100px;margin:0 auto;}
+.tbl-hd{margin-bottom:40px;}
+table{width:100%;border-collapse:collapse;background:var(--white);border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.06);border:1px solid var(--border);}
+th{padding:11px 18px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);background:var(--gray-50);border-bottom:1px solid var(--border);}
+td{padding:13px 18px;font-size:13px;border-bottom:1px solid var(--gray-100);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fbfcfd;}
+tr.best-row td{background:#f0fafb;}
+.ml-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:0.3px;}
+.t-base{background:var(--gray-100);color:var(--gray-600);}
+.t-best{background:#e0f7fa;color:#006064;}
+.t-ver{background:var(--green-lt);color:var(--green);}
+.hi{color:var(--teal);font-weight:800;}
+.lo{color:var(--gray-400);}
+.ck{color:var(--green);font-weight:700;}
+.cx{color:var(--gray-400);}
+.ntag{display:inline-block;padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;background:#fff8e1;color:var(--amber);border:1px solid #ffe082;margin-left:4px;}
+
+/* PIPELINE */
+.pipe-inner{max-width:1100px;margin:0 auto;}
+.pipe-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:48px;position:relative;}
+.pipe-steps::before{content:'';position:absolute;top:27px;left:12.5%;right:12.5%;height:2px;background:repeating-linear-gradient(90deg,var(--teal) 0,var(--teal) 8px,transparent 8px,transparent 16px);z-index:0;}
+.ps{text-align:center;padding:0 16px;position:relative;z-index:1;}
+.ps-n{width:54px;height:54px;border-radius:50%;background:var(--white);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;font-family:'Source Serif 4',serif;font-size:18px;font-weight:700;color:var(--teal);margin:0 auto 18px;}
+.ps-t{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+.ps-d{font-size:12px;color:var(--muted);line-height:1.6;}
+.ps-chip{margin-top:10px;display:inline-block;padding:3px 10px;background:var(--teal-lt);border-radius:4px;font-size:10px;font-weight:700;color:var(--teal);}
+
+/* CONTRIBUTIONS */
+.contrib-section{background:var(--gray-50);}
+.contrib-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1100px;margin:40px auto 0;}
+.cc{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:26px;transition:all 0.2s;}
+.cc:hover{box-shadow:0 4px 16px rgba(0,120,138,0.08);border-color:var(--teal);}
+.cc-n{font-family:'Source Serif 4',serif;font-size:28px;font-weight:700;color:var(--teal);line-height:1;margin-bottom:12px;opacity:0.35;}
+.cc-t{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+.cc-d{font-size:12px;color:var(--muted);line-height:1.7;}
+.first-tag{display:inline-block;margin-top:10px;padding:3px 9px;background:#fff8e1;border:1px solid #ffe082;border-radius:4px;font-size:9px;font-weight:700;color:var(--amber);letter-spacing:0.5px;}
+
+/* TEAM */
+.team-inner{max-width:900px;margin:0 auto;}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px;}
+.tc{border:1px solid var(--border);border-radius:8px;padding:24px;text-align:center;transition:all 0.2s;}
+.tc:hover{border-color:var(--teal);box-shadow:0 4px 16px rgba(0,120,138,0.08);}
+.tc-av{width:52px;height:52px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Source Serif 4',serif;font-size:18px;font-weight:700;margin:0 auto 14px;}
+.tc-name{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:3px;}
+.tc-role{font-size:11px;color:var(--teal);font-weight:700;letter-spacing:0.3px;margin-bottom:8px;}
+.tc-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+.mentor-card{grid-column:1/-1;display:flex;align-items:center;gap:20px;background:var(--gray-50);text-align:left;}
+.mentor-card .tc-av{margin:0;flex-shrink:0;width:60px;height:60px;font-size:20px;background:var(--teal);}
+
+/* CTA + FOOTER */
+.cta{background:var(--navy);padding:56px 60px;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;}
+.cta h2{font-family:'Source Serif 4',serif;font-size:clamp(22px,3vw,34px);font-weight:700;color:#fff;margin-bottom:8px;}
+.cta p{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;}
+.cta-btns{display:flex;gap:10px;flex-shrink:0;}
+footer{background:var(--gray-50);border-top:1px solid var(--border);padding:36px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.ft-links{display:flex;gap:20px;}
+.ft-links a{font-size:12px;color:var(--muted);font-weight:600;transition:color 0.15s;}
+.ft-links a:hover{color:var(--teal);}
+.ft-copy{font-size:12px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo-wrap">
+    <div class="logo-mark">R</div>
+    <div class="logo-text">Rad<em>Scribe</em> Pro</div>
+  </a>
+  <div class="nav-links">
+    <a href="#models">Results</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#contributions">Research</a>
+    <a href="#team">Team</a>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <a href=/auth/login class="btn btn-outline">Sign In</a>
+    <a href=/auth/login class="btn btn-primary">Open Dashboard</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">SIT Pune · B.Tech AI &amp; ML · 2025</div>
+    <h1>Automated Chest X-Ray <em>Report Generation</em></h1>
+    <p class="hero-desc">Five progressively sophisticated deep learning models trained on the Indiana University Chest X-Ray Collection. BioGPT decoder, dual-encoder retrieval, counterfactual RAG, and sentence-level confidence scoring.</p>
+    <div class="hero-actions">
+      <a href=/auth/login class="btn btn-primary btn-lg">🩺 Open Workstation</a>
+      <a href="#models" class="btn btn-ghost btn-lg">View Results →</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hs-num">7,470</div><div class="hs-lbl">Image-Report Pairs</div></div>
+      <div><div class="hs-num">0.0934</div><div class="hs-lbl">Best BLEU-4</div></div>
+      <div><div class="hs-num">78.25</div><div class="hs-lbl">CheXBert F1</div></div>
+      <div><div class="hs-num">5</div><div class="hs-lbl">Model Architectures</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="mock">
+      <div class="mock-bar">
+        <div class="mock-dot" style="background:#ef5350;"></div>
+        <div class="mock-dot" style="background:#ffc107;"></div>
+        <div class="mock-dot" style="background:#4caf50;"></div>
+        <span style="font-size:10px;color:var(--muted);margin-left:8px;font-weight:600;">Rad-Scribe Workstation</span>
+        <div class="mock-label">Model D Active</div>
+      </div>
+      <div class="mock-body">
+        <div class="mock-xray">🩻</div>
+        <div class="mock-r">
+          <div class="mock-r-title">Generated Report — Model D</div>
+          <div class="ml" style="width:100%;"></div>
+          <div class="ml" style="width:85%;"></div>
+          <div class="ml" style="width:95%;"></div>
+          <div class="ml" style="width:70%;"></div>
+          <div class="mc g">Heart size within normal limits</div>
+          <div class="mc g">Lungs clear bilaterally</div>
+          <div class="mc g">No pleural effusion identified</div>
+          <div class="mc r">Mediastinum — verify manually</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<section class="tbl-section" id="models">
+  <div class="tbl-inner">
+    <div class="tbl-hd">
+      <div class="sl">Ablation Study</div>
+      <div class="st">Five Models, One Progression</div>
+      <p class="ss">Each model adds exactly one architectural component — every score improvement is independently attributable.</p>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th><th>Architecture</th><th>BLEU-4</th><th>ROUGE-L</th><th>BERTScore</th><th>Clin-Acc</th><th>CheXBert F1</th><th>RAG</th><th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Model A</strong></td>
+          <td>ResNet-50 + 2-layer LSTM</td>
+          <td class="lo">0.0003</td><td>0.1151</td><td>0.7451</td><td>51%</td><td class="lo">—</td><td class="cx">✗</td>
+          <td><span class="ml-tag t-base">Baseline</span></td>
+        </tr>
+        <tr>
+          <td><strong>Model B</strong></td>
+          <td>EfficientNet-B3 + BioGPT</td>
+          <td>0.0443</td><td>0.2644</td><td>0.8501</td><td>41.5%</td><td class="lo">—</td><td class="cx">✗</td>
+          <td><span class="ml-tag t-base">+BioGPT</span></td>
+        </tr>
+        <tr>
+          <td><strong>Model C</strong></td>
+          <td>EfficientNet-B3 + FAISS RAG + BioGPT</td>
+          <td>0.0673</td><td>0.2357</td><td>0.8498</td><td>47.5%</td><td class="lo">—</td><td class="ck">✓ top-5</td>
+          <td><span class="ml-tag t-base">+RAG</span></td>
+        </tr>
+        <tr class="best-row">
+          <td><strong>Model D</strong><span class="ntag">★ BEST</span></td>
+          <td>ViT-B/16 + DenseNet-121 + CfRAG + BioGPT</td>
+          <td class="hi">0.0934</td><td class="hi">0.2906</td><td class="hi">0.8470</td><td class="hi">68%</td><td class="lo">—</td><td class="ck">✓ counterfactual</td>
+          <td><span class="ml-tag t-best">Best Overall</span></td>
+        </tr>
+        <tr>
+          <td><strong>Model E</strong></td>
+          <td>Model D + Disease Classifier + Verifier</td>
+          <td class="lo">—</td><td class="lo">—</td><td class="lo">—</td><td>52%</td><td class="hi">78.25</td><td class="ck">✓ dual</td>
+          <td><span class="ml-tag t-ver">Verified</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px;color:var(--muted);margin-top:10px;">IU X-Ray test set · N=188 · BLEU: SmoothingFunction · BERTScore: distilbert-base-uncased · CheXBert: StanfordAIMI 14-condition label F1</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="pipeline">
+  <div class="pipe-inner">
+    <div class="sl">How It Works</div>
+    <div class="st">Model D Pipeline</div>
+    <p class="ss">From raw chest X-ray to a clinically grounded, confidence-scored report in four stages.</p>
+    <div class="pipe-steps">
+      <div class="ps">
+        <div class="ps-n">1</div>
+        <div class="ps-t">Dual Visual Encoding</div>
+        <div class="ps-d">ViT-Base/16 captures global spatial structure. DenseNet-121 captures local pathology texture. Both fused into 1024-dim via LayerNorm projection.</div>
+        <div class="ps-chip">ViT + DenseNet → 1024-dim</div>
+      </div>
+      <div class="ps">
+        <div class="ps-n">2</div>
+        <div class="ps-t">Counterfactual Retrieval</div>
+        <div class="ps-d">FAISS searches 4,300+ training embeddings. Returns top-3 similar cases AND top-2 dissimilar cases for contrast.</div>
+        <div class="ps-chip">FAISS IndexFlatIP</div>
+      </div>
+      <div class="ps">
+        <div class="ps-n">3</div>
+        <div class="ps-t">BioGPT Generation</div>
+        <div class="ps-d">Image token prepended to retrieved context. BioGPT (15M PubMed papers) generates a grounded report with beam search.</div>
+        <div class="ps-chip">microsoft/biogpt</div>
+      </div>
+      <div class="ps">
+        <div class="ps-n">4</div>
+        <div class="ps-t">Confidence Scoring</div>
+        <div class="ps-d">Each sentence gets a log-probability score. Green = high confidence. Red = flagged for radiologist verification.</div>
+        <div class="ps-chip">Sentence-level LP</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="contrib-section" id="contributions">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="sl">Research Contributions</div>
+    <div class="st">Novel on IU X-Ray Dataset</div>
+    <p class="ss">Five firsts, each independently justified by ablation study results.</p>
+    <div class="contrib-grid">
+      <div class="cc"><div class="cc-n">01</div><div class="cc-t">BioGPT Decoder</div><div class="cc-d">First application of Microsoft BioGPT on IU X-Ray. Medical terms like cardiomegaly and atelectasis are single tokens — not fragmented subwords. Directly improves generation quality.</div><div class="first-tag">FIRST ON IU X-RAY</div></div>
+      <div class="cc"><div class="cc-n">02</div><div class="cc-t">Counterfactual RAG</div><div class="cc-d">First counterfactual retrieval on IU X-Ray. Retrieves similar AND dissimilar cases — forcing the model to learn what distinguishes each scan from normal or abnormal presentations.</div><div class="first-tag">FIRST ON IU X-RAY</div></div>
+      <div class="cc"><div class="cc-n">03</div><div class="cc-t">Dual Encoder Fusion</div><div class="cc-d">ViT-Base/16 for global attention + DenseNet-121 for local pathology detection, concatenated and projected to 1024-dim. Global and local understanding simultaneously.</div><div class="first-tag">FIRST ON IU X-RAY</div></div>
+      <div class="cc"><div class="cc-n">04</div><div class="cc-t">Claim-Level Verification</div><div class="cc-d">Model E scores each generated sentence against three evidence sources: classifier probability, supportive case evidence, and counterfactual case evidence.</div><div class="first-tag">NOVEL CONTRIBUTION</div></div>
+      <div class="cc"><div class="cc-n">05</div><div class="cc-t">Sentence Confidence Display</div><div class="cc-d">Colour-coded confidence per sentence in the clinical dashboard. Radiologists see which findings are high-confidence and which require manual verification — reducing cognitive load.</div><div class="first-tag">CLINICAL INNOVATION</div></div>
+      <div class="cc"><div class="cc-n">06</div><div class="cc-t">CheXBert Evaluation</div><div class="cc-d">Model E evaluated on all 14 clinical conditions using StanfordAIMI CheXBert. 78.25 MicroF1 — directly measuring diagnostic accuracy across specific pathologies.</div><div class="first-tag">CLINICAL METRIC</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="team">
+  <div class="team-inner">
+    <div class="sl">The Team</div>
+    <div class="st">Built at Symbiosis Institute of Technology</div>
+    <p class="ss">B.Tech AI & ML, Semester IV — Pune, India.</p>
+    <div class="team-grid">
+      <div class="tc mentor-card">
+        <div class="tc-av">ZA</div>
+        <div>
+          <div class="tc-name">Dr. Zulfikar Ali Ansari</div>
+          <div class="tc-role">Faculty Mentor</div>
+          <div class="tc-desc">Supervised architecture design, ablation methodology, and research contributions. Symbiosis Institute of Technology, Pune.</div>
+        </div>
+      </div>
+      <div class="tc"><div class="tc-av">HG</div><div class="tc-name">Hardik Gulati</div><div class="tc-role">Model B · D · Dashboard</div><div class="tc-desc">EfficientNet+BioGPT, dual encoder, counterfactual RAG, Gradio dashboard, preprocessing pipeline.</div></div>
+      <div class="tc"><div class="tc-av">TK</div><div class="tc-name">Tejas Kale</div><div class="tc-role">Model A · Project Lead</div><div class="tc-desc">ResNet+LSTM baseline, project coordination, notebook architecture, evaluation framework.</div></div>
+      <div class="tc"><div class="tc-av">SD</div><div class="tc-name">Swaraj Deogirkar</div><div class="tc-role">Model E · Embeddings</div><div class="tc-desc">Model E verification, FAISS extraction, CheXBert evaluation, confidence scoring system.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="cta">
+  <div>
+    <h2>Ready to generate your first report?</h2>
+    <p>Upload a chest X-ray and receive automated reports from all five models with sentence-level confidence scoring.</p>
+  </div>
+  <div class="cta-btns">
+    <a href=/auth/login class="btn btn-primary btn-lg">🩺 Doctor Login</a>
+    <a href=/auth/login class="btn btn-ghost btn-lg">👤 Patient Login</a>
+  </div>
+</div>
+
+<footer>
+  <div class="logo-wrap">
+    <div class="logo-mark">R</div>
+    <div class="logo-text">Rad<em>Scribe</em> Pro</div>
+  </div>
+  <div class="ft-links">
+    <a href="#models">Results</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#team">Team</a>
+    <a href=/auth/logi>Dashboard</a>
+  </div>
+  <div class="ft-copy">© 2025 Rad-Scribe Pro · SIT Pune · B.Tech AI &amp; ML Semester IV</div>
+</footer>
+</body>
+</html>

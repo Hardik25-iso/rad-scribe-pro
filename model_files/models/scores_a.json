@@ -1,0 +1,24 @@
+{
+  "bleu1": 0.0931,
+  "bleu4": 0.0003,
+  "rougeL_f1": 0.1361,
+  "bertscore_f1": 0.7737,
+  "chexbert_macro_f1": 0.0686,
+  "chexbert_per_label_f1": {
+    "No Finding": 0.961,
+    "Enlarged Cardiomediastinum": 0.0,
+    "Cardiomegaly": 0.0,
+    "Lung Opacity": 0.0,
+    "Lung Lesion": 0.0,
+    "Edema": 0.0,
+    "Consolidation": 0.0,
+    "Pneumonia": 0.0,
+    "Atelectasis": 0.0,
+    "Pneumothorax": 0.0,
+    "Pleural Effusion": 0.0,
+    "Pleural Other": 0.0,
+    "Fracture": 0.0,
+    "Support Devices": 0.0
+  },
+  "chexbert_labeler": "keyword_fallback"
+}

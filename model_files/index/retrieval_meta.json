@@ -1,0 +1,18 @@
+{
+  "n_vectors": 4308,
+  "embed_dim": 1536,
+  "index_type": "flat",
+  "top_k": 5,
+  "backbone": "EfficientNet-B3 (frozen)",
+  "normalization": "L2 unit sphere",
+  "similarity": "cosine (inner product on unit sphere)",
+  "source_splits": "train only",
+  "dataset": "MLforHealthcare/Indiana_University_Chest_X-ray_Collection",
+  "files": {
+    "embeddings": "/content/drive/MyDrive/Radscribe/radscribe_index/embeddings.npy",
+    "reports": "/content/drive/MyDrive/Radscribe/radscribe_index/reports.npy",
+    "indices": "/content/drive/MyDrive/Radscribe/radscribe_index/indices.npy",
+    "labels": "/content/drive/MyDrive/Radscribe/radscribe_index/labels.npy",
+    "faiss_index": "/content/drive/MyDrive/Radscribe/radscribe_index/faiss.index"
+  }
+}

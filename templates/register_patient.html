@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Registration — Rad-Scribe Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Nunito+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1a2b4a;--teal:#00788a;--white:#ffffff;--gray-50:#f7f9fb;--gray-200:#d8dee8;--gray-400:#94a3b8;--gray-600:#475569;--green:#2e7d32;--red:#b71c1c;--red-lt:#ffebee;--border:#dde3ed;--text:#1e293b;--muted:#64748b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito Sans',sans-serif;color:var(--text);background:var(--gray-50);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px;}
+a{text-decoration:none;color:var(--green);font-weight:700;}
+.form-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:32px;box-shadow:0 1px 4px rgba(0,0,0,0.05);width:100%;max-width:500px;}
+h2{font-family:'Source Serif 4',serif;color:var(--navy);margin-bottom:8px;font-size:24px;}
+p.sub{color:var(--muted);font-size:14px;margin-bottom:24px;}
+.fg{margin-bottom:18px;}
+.fg label{display:block;font-size:12px;font-weight:700;color:var(--gray-600);margin-bottom:6px;letter-spacing:0.3px;}
+.fg input{width:100%;padding:10px 13px;background:var(--white);border:1.5px solid var(--border);border-radius:6px;color:var(--text);font-family:'Nunito Sans',sans-serif;font-size:14px;outline:none;}
+.fg input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(46,125,50,0.08);}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.submit-btn{width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer;margin-top:10px;margin-bottom:16px;}
+.submit-btn:hover{background:#1b5e20;}
+.flash{padding:10px;border-radius:4px;font-size:13px;font-weight:bold;margin-bottom:16px;text-align:center;background-color:var(--red-lt);color:var(--red);border:1px solid rgba(182,28,28,0.2);}
+.back-link{text-align:center;font-size:13px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<form class="form-card" method="POST" action="/auth/register/patient">
+  <h2>Patient Registration</h2>
+  <p class="sub">Register to securely view your radiology reports.</p>
+  
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+        <div class="flash">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="fg">
+    <label>FULL NAME</label>
+    <input type="text" name="full_name" required>
+  </div>
+  <div class="fg-row">
+    <div class="fg">
+      <label>EMAIL ADDRESS</label>
+      <input type="email" name="email" required>
+    </div>
+    <div class="fg">
+      <label>PASSWORD</label>
+      <input type="password" name="password" required minlength="8">
+    </div>
+  </div>
+  <div class="fg-row">
+    <div class="fg">
+      <label>PATIENT ID / UHID</label>
+      <input type="text" name="patient_id" placeholder="e.g. PID-123" required>
+    </div>
+    <div class="fg">
+      <label>DATE OF BIRTH</label>
+      <input type="date" name="date_of_birth">
+    </div>
+  </div>
+  <div class="fg-row">
+    <div class="fg">
+      <label>MOBILE NUMBER</label>
+      <input type="tel" name="mobile">
+    </div>
+    <div class="fg">
+      <label>HOSPITAL</label>
+      <input type="text" name="hospital">
+    </div>
+  </div>
+  
+  <button type="submit" class="submit-btn">Create Patient Account</button>
+  <div class="back-link">Already registered? <a href="/auth/login">Sign in</a></div>
+</form>
+
+</body>
+</html>

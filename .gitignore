@@ -1,0 +1,27 @@
+# Virtual Environments
+venv/
+env/
+.venv/
+
+# Environment Variables / Secrets
+.env
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local Databases
+*.db
+*.sqlite3
+
+# Uploaded Files (Do not push medical images to GitHub!)
+uploads/
+*.jpg
+*.jpeg
+*.png
+
+# OS Files
+.DS_Store
+Thumbs.db
