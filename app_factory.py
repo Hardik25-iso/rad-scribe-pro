@@ -21,13 +21,22 @@ def create_app():
     # ── Config ───────────────────────────────────────────────────────────────
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'radscribe-dev-secret-2025')
 
-    DB_USER = os.environ.get('DB_USER', 'root')
-    DB_PASS = os.environ.get('DB_PASS', 'root')
-    DB_HOST = os.environ.get('DB_HOST', 'localhost')
-    DB_NAME = os.environ.get('DB_NAME', 'radscribedb')
-    app.config['SQLALCHEMY_DATABASE_URI'] = (
-        f'mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}'
-    )
+    # Check if we are running in the cloud (Render)
+    if os.environ.get('RENDER'):
+        # Use Supabase Cloud Database
+        db_url = os.environ.get('DATABASE_URL')
+        # SQLAlchemy requires 'postgresql://' instead of 'postgres://'
+        if db_url and db_url.startswith("postgres://"):
+            db_url = db_url.replace("postgres://", "postgresql://", 1)
+        app.config['SQLALCHEMY_DATABASE_URI'] = db_url
+    else:
+        # Use Local MySQL (Your Laptop)
+        DB_USER = os.environ.get('DB_USER', 'root')
+        DB_PASS = os.environ.get('DB_PASS', 'root')
+        DB_HOST = os.environ.get('DB_HOST', 'localhost')
+        DB_NAME = os.environ.get('DB_NAME', 'radscribedb')
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}'
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     app.config['UPLOAD_FOLDER']      = os.path.join(os.path.dirname(__file__), 'uploads')
