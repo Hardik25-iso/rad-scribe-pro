@@ -89,9 +89,20 @@ a{text-decoration:none;color:inherit;}
       
       <div class="img-panel">
         <img src="{{ url_for('doctor.uploaded_file', filename=scan.filename) }}" alt="Chest X-Ray">
+        
         <div class="img-meta">
           <strong>Patient:</strong> {{ scan.patient.full_name if scan.patient else 'Unassigned' }}<br>
-          <strong>Uploaded:</strong> {{ scan.uploaded_at.strftime('%B %d, %Y - %I:%M %p') }}<br>
+          
+          <strong>Uploaded:</strong> <span id="local-time"></span><br>
+          <script>
+            // Takes the UTC time from Python and converts it to the browser's exact time
+            const utcDate = new Date("{{ scan.uploaded_at.strftime('%Y-%m-%dT%H:%M:%SZ') }}");
+            document.getElementById('local-time').innerText = utcDate.toLocaleString('en-IN', {
+                month: 'long', day: '2-digit', year: 'numeric', 
+                hour: '2-digit', minute:'2-digit', hour12: true
+            });
+          </script>
+          
           <strong>Status:</strong> <span style="color:var(--green); font-weight:bold;">Analysis Complete</span>
         </div>
       </div>

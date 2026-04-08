@@ -29,13 +29,32 @@ def _allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed
 
 # ── Image Serving Route ───────────────────────────────────────────────────────
+import os
+from flask import send_file, abort
+
 @doctor_bp.route('/uploads/<path:filename>')
 @login_required
 @_doctor_required
 def uploaded_file(filename):
-    """Securely serve uploaded X-ray images to the dashboard."""
-    return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
+    # 1. Get the exact, absolute path to the folder
+    folder = current_app.config['UPLOAD_FOLDER']
+    full_path = os.path.join(folder, filename)
+    
+    # 2. Print aggressive debugging to your VS Code terminal
+    print("\n" + "="*50)
+    print(f"🔍 FLASK IMAGE DEBUGGER 🔍")
+    print(f"Looking for: {full_path}")
+    print(f"Does Windows see it? : {os.path.exists(full_path)}")
+    print(f"Is it a file?        : {os.path.isfile(full_path)}")
+    print("="*50 + "\n")
 
+    # 3. Force the image to load using send_file instead of send_from_directory
+    if os.path.exists(full_path):
+        return send_file(full_path)
+    else:
+        # If it still fails, it means the database and hard drive are out of sync
+        print("❌ ERROR: File truly does not exist on the hard drive.")
+        abort(404)
 # ── Background Inference Engine ───────────────────────────────────────────────
 def background_inference(app, scan_id, save_path, models_to_run):
     """Runs heavy ML models in a separate thread so Flask doesn't freeze."""
