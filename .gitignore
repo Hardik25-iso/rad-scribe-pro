@@ -25,3 +25,28 @@ uploads/
 # OS Files
 .DS_Store
 Thumbs.db
+
+
+
+# Environments & Virtual Envs
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Secrets & Configs (CRITICAL)
+.env
+
+# AI & Library Caches
+.hf_cache/
+.claude/
+
+# User Uploads
+uploads/
+
+# Massive ML Model Weights (CRITICAL for GitHub)
+*.pth
+*.pt
+*.h5
+*.bin
+model_b_best.pth

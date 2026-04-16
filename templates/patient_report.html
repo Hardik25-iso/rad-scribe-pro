@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Medical Report - Radscribe</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 40px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; border-bottom: 2px solid #2c3e50; padding-bottom: 20px; margin-bottom: 20px; }
+        .section { margin-bottom: 20px; }
+        .label { font-weight: bold; color: #2c3e50; }
+        .result-box { background: #f9f9f9; padding: 15px; border-left: 5px solid #3498db; border-radius: 4px; }
+        .btn { display: inline-block; padding: 10px 20px; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; border: none; cursor: pointer; font-size: 14px; }
+        .btn:hover { opacity: 0.9; }
+        .btn-primary { background: #3498db; }
+        .btn-secondary { background: #2c3e50; }
+
+        /* Model Info Box */
+        .model-info { background: #e8f4f8; border: 1px solid #b8d4e8; border-radius: 6px; padding: 15px; margin-top: 15px; }
+        .model-info h4 { margin: 0 0 10px 0; color: #1a5276; font-size: 14px; }
+        .metric-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #d0e1f0; font-size: 13px; }
+        .metric-row:last-child { border-bottom: none; }
+        .metric-label { color: #555; }
+        .metric-value { font-weight: 600; color: #1a5276; }
+        .metric-value.high { color: #27ae60; }
+        .metric-value.medium { color: #f39c12; }
+
+        /* Confidence Bar */
+        .confidence-section { margin-top: 15px; }
+        .confidence-label { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 8px; }
+        .confidence-bar-container { background: #e0e0e0; border-radius: 10px; height: 20px; overflow: hidden; }
+        .confidence-bar { height: 100%; border-radius: 10px; transition: width 0.3s ease; }
+        .confidence-bar.high { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+        .confidence-bar.medium { background: linear-gradient(90deg, #f39c12, #f1c40f); }
+        .confidence-bar.low { background: linear-gradient(90deg, #e74c3c, #e67e22); }
+        .confidence-value { text-align: center; margin-top: 5px; font-size: 14px; font-weight: 700; color: #2c3e50; }
+
+        /* Verification Badge */
+        .verification-badge { display: inline-flex; align-items: center; gap: 6px; background: #d5f5e3; border: 1px solid #27ae60; border-radius: 20px; padding: 6px 12px; font-size: 12px; font-weight: 600; color: #1e8449; margin-top: 10px; }
+        .verification-badge::before { content: '✓'; font-size: 14px; }
+
+        /* Disclaimer */
+        .disclaimer { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin-top: 20px; font-size: 12px; color: #856404; }
+        .disclaimer strong { display: block; margin-bottom: 4px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>RADSCRIBE AI</h1>
+        <h3>Radiology Diagnostic Report</h3>
+    </div>
+
+    <div class="section">
+        <p><span class="label">Patient Name:</span> {{ patient.full_name }}</p>
+        <p><span class="label">Date of Scan:</span> {{ scan.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</p>
+        <p><span class="label">Reference ID:</span> #{{ scan.id }}</p>
+    </div>
+
+    <div class="section">
+        <h2 class="label">Diagnostic Impression:</h2>
+        <div class="result-box">
+            {% if report %}
+                <p>{{ report.generated_text }}</p>
+
+                {% if report.clinical_label %}
+                <p style="margin-top: 10px; font-size: 14px;">
+                    <strong>Classification:</strong>
+                    <span style="color: {{ '#2e7d32' if report.clinical_label == 'Normal' else '#b71c1c' }};">
+                        {{ report.clinical_label }}
+                    </span>
+                </p>
+                {% endif %}
+
+                <!-- Model Performance Metrics -->
+                <div class="model-info">
+                    <h4>📊 Model Performance Metrics</h4>
+
+                    {% if report.model_name == 'model_e' %}
+                    <div class="metric-row">
+                        <span class="metric-label">Model Architecture</span>
+                        <span class="metric-value">EfficientNet-B3 + CheXBert Verification</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Clinical Accuracy</span>
+                        <span class="metric-value high">68.0%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">CheXBert Micro F1 Score</span>
+                        <span class="metric-value high">78.25%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">CheXBert Macro F1 Score</span>
+                        <span class="metric-value medium">56.27%</span>
+                    </div>
+
+                    {% if report.clf_proba %}
+                    <div class="confidence-section">
+                        <div class="confidence-label">Prediction Confidence</div>
+                        {% set normal_prob = (report.clf_proba[1] * 100)|round %}
+                        {% set abnormal_prob = (report.clf_proba[0] * 100)|round %}
+                        <div class="confidence-bar-container">
+                            <div class="confidence-bar {{ 'high' if normal_prob >= 70 else ('medium' if normal_prob >= 50 else 'low') }}"
+                                 style="width: {{ normal_prob }}%;"></div>
+                        </div>
+                        <div class="confidence-value">Normal: {{ normal_prob }}% | Abnormal: {{ abnormal_prob }}%</div>
+                    </div>
+                    {% endif %}
+
+                    <div class="verification-badge">
+                        Verified by CheXBert Medical NLP System
+                    </div>
+
+                    {% elif report.model_name == 'model_d' %}
+                    <div class="metric-row">
+                        <span class="metric-label">Model Architecture</span>
+                        <span class="metric-value">ViT + DenseNet + BioGPT + RAG</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Clinical Accuracy</span>
+                        <span class="metric-value high">68.0%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">BLEU-4 Score</span>
+                        <span class="metric-value medium">1.72%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">ROUGE-L Score</span>
+                        <span class="metric-value medium">10.84%</span>
+                    </div>
+
+                    {% elif report.model_name == 'model_b' %}
+                    <div class="metric-row">
+                        <span class="metric-label">Model Architecture</span>
+                        <span class="metric-value">EfficientNet-B3 + BioGPT</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Clinical Accuracy</span>
+                        <span class="metric-value medium">52.5%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">BLEU-4 Score</span>
+                        <span class="metric-value medium">3.58%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">ROUGE-L Score</span>
+                        <span class="metric-value high">17.48%</span>
+                    </div>
+
+                    {% elif report.model_name == 'model_c' %}
+                    <div class="metric-row">
+                        <span class="metric-label">Model Architecture</span>
+                        <span class="metric-value">EfficientNet + FAISS RAG + BioGPT</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Clinical Accuracy</span>
+                        <span class="metric-value medium">47.5%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">BLEU-4 Score</span>
+                        <span class="metric-value medium">1.40%</span>
+                    </div>
+
+                    {% else %}
+                    <div class="metric-row">
+                        <span class="metric-label">Model</span>
+                        <span class="metric-value">{{ report.model_name }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+            {% else %}
+                <p>Report not yet generated. Please check back later.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <a href="{{ url_for('patient.dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+    <button onclick="window.print()" class="btn btn-secondary">Download PDF</button>
+
+    <div class="disclaimer">
+        <strong>⚠️ Medical Disclaimer:</strong>
+        This report is generated by an AI-assisted system and is intended for educational and research purposes only.
+        All findings should be verified by a qualified radiologist before clinical use.
+        Do not make medical decisions based solely on this automated report.
+    </div>
+</body>
+</html>
