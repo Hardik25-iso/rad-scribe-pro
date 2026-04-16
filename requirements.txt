@@ -1,19 +1,10 @@
---extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.2.1+cpu
-torchvision==0.17.1+cpu
-
 Flask==3.0.0
-Flask-Login==0.6.3
 Flask-SQLAlchemy==3.1.1
-Werkzeug==3.0.1
-gunicorn==21.2.0
+Flask-Bcrypt==1.0.1
+Flask-Login==0.6.3
 psycopg2-binary==2.9.9
-
-transformers==4.38.2
-faiss-cpu==1.8.0
-numpy==1.26.4
-pandas==2.2.1
-scikit-learn==1.4.1.post1
-Pillow==10.2.0
-tqdm==4.66.2
-timm
+Werkzeug==3.0.1
+numpy
+Pillow
+python-dotenv==1.0.1
+gunicorn==21.2.0
